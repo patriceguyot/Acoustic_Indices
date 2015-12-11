@@ -3,7 +3,6 @@
 Acoustic_Indices is a Python library to extract acoustic indices from a set of audio files, in the framework of Soundscape Ecology.
 
 
-
 ## Prerequisites
 
  * [Numpy](http://www.numpy.org/)
