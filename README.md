@@ -4,22 +4,18 @@ TODO: Write a project description
 
 Python library to compute acoustic indices for soundscape ecology.
 
-## Installation
+## Prerequisites
 
-This library needs:
+ * [Numpy](http://www.numpy.org/)
+ * [Scipy](http://www.scipy.org/)
+ * [Matlplotlib](http://matplotlib.org/) (for graphing)
 
- * Python
- * Numpy
- * Scipy
- * Matlplotlib
+## Features and indices
 
- On Mac OS X, you can use homebrew (http://brew.sh/). To install it simply launch a terminal and enter:
- $ ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
-Then install python
-$ brew install python
-and the pyhon package
-$ pip install numpy scipy matplotlib
-
+* Read WAV files (using scipy)
+* Features from Soundscape Ecology 
+ * Acoustic Complexity Index
+ * Bioacoustic Index
 
 ## Usage
 

@@ -314,3 +314,9 @@ def compute_rms_energy(sig, wLen=512, wHop=256):
     return [np.sqrt(sum([ x**2 for x in frame ]) / wLen) for frame in frames]
 
 
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def compute_spectral_centroid(spectro, frequencies):
+    """
+    Compute the spectral centroid of an audio signal from its spectrogram
+    """
+    return
