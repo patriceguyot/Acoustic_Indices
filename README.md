@@ -14,8 +14,23 @@ Python library to compute acoustic indices for soundscape ecology.
 
 * Read WAV files (using scipy)
 * Features from Soundscape Ecology 
- * Acoustic Complexity Index
- * Bioacoustic Index
+    * Acoustic Complexity Index
+    * Acoustic Diversity Index
+    * Acoustic Evenness Index
+    * Bioacoustic Index
+    * Normalized Difference Sound Index
+    * Spectral Entropy
+    * Temporal Entropy
+    
+    
+    
+* Spectral features
+    * Spectral centroid (in progress)
+    
+* Temporal features
+    * RMS energy
+    * Zero Crossing Rate
+    
 
 ## Usage
 
