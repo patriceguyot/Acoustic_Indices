@@ -13,7 +13,6 @@ __email__ = ["guyot.patrice@gmail.com", "alicee@sussex.ac.uk", "m.r.peck@sussex.
 __status__ = "Development"
 
 
-
 from scipy.io.wavfile import read as wavread
 from compute_indices import *
 import matplotlib.pyplot as plt
