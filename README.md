@@ -45,8 +45,10 @@ $python compute_indices.py
 
 ## History
 
-0.2: yaml configuration file. Object oriented audio file ad index.
-0.1: First commit 
+Versions: 
+
+* 0.2: yaml configuration file. Object oriented audio file and index.
+* 0.1: First commit 
 
 
 

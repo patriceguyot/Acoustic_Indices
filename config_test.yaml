@@ -1,3 +1,6 @@
+# 17 decembre 2015
+# Parameters set to output the (more or less) the same value as in R.
+
 ---
 Filtering:
   type: butterworth
