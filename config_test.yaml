@@ -1,0 +1,103 @@
+---
+Filtering:
+  type: butterworth
+  order: 8
+  frequency: 300
+
+Indices:
+
+  Acoustic_Complexity_Index:
+    function: compute_ACI
+    spectro:
+      windowLength: 512
+      windowHop: 512
+      scale_audio: False
+      square: False
+      windowType: hamming
+      centered: False
+      normalized: True
+    arguments:
+      j_bin: 5 # j_bin in seconds
+
+  Acoustic_Diversity_Index:
+    function: compute_ADI
+    arguments:
+      max_freq: 10000
+      db_threshold: -50
+      freq_step: 1000
+
+  Acoustic_Evenness_Index:
+    function: compute_AEI
+    arguments:
+      max_freq: 10000
+      db_threshold: -50
+      freq_step: 1000
+
+
+  Bio_acoustic_Index:
+    function: compute_BI
+    spectro:
+      windowLength: 512
+      windowHop: 256
+      scale_audio: True
+      square: False
+      windowType: hanning
+      centered: False
+      normalized: False
+    arguments:
+      min_freq: 2000
+      max_freq: 8000
+
+  Normalized_Difference_Sound_Index:
+    function: compute_NDSI
+    arguments:
+      windowLength: 1024
+      anthrophony: [1000,2000]
+      biophony: [2000,11000]
+
+  RMS_energy:
+    function: compute_rms_energy
+    arguments:
+      windowLength: 512  # Length of the frame (samples)
+      windowHop: 256     # Length of the lag (samples)
+      integer: False #if true, use an audio signal of integers
+
+  Spectral_centroid:
+    function: compute_spectral_centroid
+    spectro:
+      windowLength: 512
+      windowHop: 256
+      scale_audio: True
+      square: False
+      windowType: hanning
+      centered: False
+      normalized: False
+
+  Spectral_Entropy:
+    function: compute_SH
+    spectro:
+      windowLength: 512
+      windowHop: 256
+      scale_audio: True
+      square: False
+      windowType: hanning
+      centered: False
+      normalized: False
+
+  Temporal_Entropy:
+    function: compute_TH
+    arguments:
+      integer: True #if true, use an audio signal of integers
+
+  ZCR:
+    function: compute_zcr
+    arguments:
+      windowLength: 512  # Length of the frame (samples)
+      windowHop: 256     # Length of the lag (samples)
+
+
+
+
+
+
+...

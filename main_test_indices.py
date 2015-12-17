@@ -7,36 +7,19 @@ __author__ = 'guyot'
 """
 
 __author__ = "Patrice Guyot"
-__version__ = "0.1"
+__version__ = "0.2"
 __credits__ = ["Patrice Guyot", "Alice Eldridge", "Mika Peck"]
 __email__ = ["guyot.patrice@gmail.com", "alicee@sussex.ac.uk", "m.r.peck@sussex.ac.uk"]
 __status__ = "Development"
 
 
-from scipy.io.wavfile import read as wavread
-from compute_indices import *
-import matplotlib.pyplot as plt
+from compute_indice import *
+from acoustic_index import *
+import yaml
+from scipy import signal
+import csv
 
 
-#------------------------------------------------------------------------------------------
-def plot_spectrogram(data,sig,sr):
-    """
-    Plot spectrogram
-    """
-    colormap="jet"
-    npdata=np.array(data)
-    ims = 20.*np.log10(np.abs(npdata)/10e-6) # amplitude to decibel
-    plt.imshow(ims, origin="lower", aspect="auto", cmap=colormap, interpolation="none")
-    plt.xlabel("time ")
-    plt.ylabel("frequency")
-
-    binsize=2**10
-    timebins, freqbins = np.shape(ims)
-    xlocs = np.float32(np.linspace(0, timebins-1, 5))
-    plt.xticks(xlocs, ["%.02f" % l for l in ((xlocs*len(sig)/timebins)+(0.5*binsize))/sr])
-
-
-    plt.show()
 
 
 
@@ -44,94 +27,137 @@ def plot_spectrogram(data,sig,sr):
 if __name__ == '__main__':
 
 
+    #Set config file
+    yml_file = 'config_test_R.yaml'
+
     # Read signal -------------------------------------
+    filename = '/Users/guyot/Documents/Workspaces/Python/Acoustic_Indices/audio_files/1.wav'
 
 
-    filename = 'PL-16_0_20150605_0615.wav'
-    filename = '1.wav'
+
+    file = AudioFile(filename, verbose=True)
+
+    with open(yml_file, 'r') as stream:
+        data_config = yaml.load(stream)
 
 
-    print 'Read signal ', filename
-    sr, sig = wavread('data/' + filename)
-
-    f_nyquist = sr/2
-
-
-    # -----------------------------------------------------
-    print('Compute spectrogram')
-    windowLength = 512  # Length of sliding window for fft (samples)
-    windowHop = 512     # Length of lag for fft (samples)
-
-    frequencies = [e * f_nyquist / float(windowLength / 2) for e in range(windowLength / 2)] # vector of frequency<-bin in the spectrogram
-    spectro = compute_spectrogram(sig, wLen=windowLength, wHop= windowHop, scale_audio=True, square=False, windowType='hanning', centered=False, normalization= False )
-    plot_spectrogram(spectro, sig, sr)
-
-    # -----------------------------------------------------
-    print('RMS energy')
-    windowLength = 512  # Length of teh frame (samples)
-    windowHop = 256     # Length of the lag (samples)
-
-    rms = compute_rms_energy(pcm2float(sig, 'float64'), windowLength, windowHop)
-    plt.plot(rms)
-    plt.show()
-
-    # -----------------------------------------------------
-    print('ZCR')
-    windowLength = 512  # Length of teh frame (samples)
-    windowHop = 256     # Length of the lag (samples)
-
-    zcr = compute_zcr(sig, windowLength, windowHop)
-    plt.plot(zcr)
-    plt.show()
-
-    # -----------------------------------------------------
-    print('Acoustic Diversity Index')
-    adi =  compute_ADI(sig, sr, max_freq = 10000, db_threshold = -50, freq_step = 1000)
-    print(adi)
-
-    # -----------------------------------------------------
-    print('Acoustic Evenness Index')
-    aei =  compute_AEI(sig, sr, max_freq = 10000, db_threshold = -50, freq_step = 1000)
-    print(aei)
+    # Pre-processing -----------------------------------------------------------------------------------
+    if 'Filtering' in data_config:
+        print '- Pre-processing - High-Pass Filtering:', data_config['Filtering']
+        freq_filter = data_config['Filtering']['frequency']
+        Wn = freq_filter/float(file.niquist)
+        order = data_config['Filtering']['order']
+        [b,a] = signal.butter(order, Wn, btype='highpass')
+        #[z, p, k] = signal.butter(order, Wn, btype='highpass', output='zpk')
 
 
-    # -----------------------------------------------------
-    print('NDSI')
-    windowLength = 1024
-    #spectro = compute_spetrogram(sig, wLen=windowLength, wHop= windowHop, scale_audio=True, square=True, windowType='hanning', centered=False, normalization= True )
-    # TODO  check the pcm2float signal int to float between -1 and 1
-    ndsi =  compute_NDSI(pcm2float(sig, 'float64'), sr, windowLength, [1000,2000], [2000,11000])
-    print(ndsi)
+        # to plot the frequency response
+        #w, h = signal.freqz(b, a, worN=2000)
+        #plt.plot((file.sr * 0.5 / np.pi) * w, abs(h))
+        #plt.show()
+        file.process_filtering(signal.filtfilt(b, a, file.sig_float))
 
-    # -----------------------------------------------------
-    print('Spectral Entropy')
-    spectro = compute_spectrogram(sig, wLen=windowLength, wHop= windowHop, scale_audio=True, square=False, windowType='hanning', centered=False, normalization= False )
-    sh = compute_SH(spectro)
-    print(sh)
 
-    # -----------------------------------------------------
-    print('Compute Temporal Entropy')
-    th = compute_TH(sig)
-    print(th)
+    # Compute Indices -----------------------------------------------------------------------------------
+    print '- Compute Indices'
+    ci = data_config['Indices'] # use to simplify the notation
+    for index_name in ci.iterkeys():  # iterate over the index names (key of dictionary in the yml file)
 
-    # -----------------------------------------------------
-    print('Compute Total Entropy')
-    H = sh * th
-    print(H)
 
-    # -----------------------------------------------------
-    print('Compute ACI')
-    spectro = compute_spectrogram(sig, wLen=windowLength, wHop= windowHop, scale_audio=False, square=False, windowType='hamming', centered=False, normalization= True )
+        if index_name == 'Acoustic_Complexity_Index':
+            print '\tCompute', index_name
+            spectro, _ = compute_spectrogram(file, **ci[index_name]['spectro'])
+            methodToCall = globals().get(ci[index_name]['function'])
+            j_bin = ci[index_name]['arguments']['j_bin'] * file.sr / ci[index_name]['spectro']['windowHop'] # transform j_bin in samples
+            main_value, temporal_values = methodToCall(spectro, j_bin)
+            file.indices[index_name] = Index(index_name, temporal_values=temporal_values, main_value=main_value)
 
-    j = 5 # j in seconds
-    j_bin = j * sr / windowHop
-    aci = compute_ACI(spectro, j_bin)
-    print(aci)
 
-    # -----------------------------------------------------
-    print('Compute BI')
-    spectro = compute_spectrogram(sig, wLen=windowLength, wHop= windowHop, scale_audio=True, square=False, windowType='hanning', centered=False, normalization= False )
-    min_freq = 2000
-    max_freq = 8000
-    BI = compute_BI(spectro, frequencies, min_freq, max_freq)
-    print(BI)
+        elif index_name == 'Acoustic_Diversity_Index':
+            print '\tCompute', index_name
+            methodToCall = globals().get(ci[index_name]['function'])
+            freq_band_Hz = ci[index_name]['arguments']['max_freq'] / ci[index_name]['arguments']['freq_step']
+            windowLength = file.sr / freq_band_Hz
+            spectro,_ = compute_spectrogram(file, windowLength=windowLength, windowHop= windowLength, scale_audio=True, square=False, windowType='hanning', centered=False, normalized= False )
+            main_value = methodToCall(spectro, freq_band_Hz, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
+        elif index_name == 'Acoustic_Evenness_Index':
+            print '\tCompute', index_name
+            methodToCall = globals().get(ci[index_name]['function'])
+            freq_band_Hz = ci[index_name]['arguments']['max_freq'] / ci[index_name]['arguments']['freq_step']
+            windowLength = file.sr / freq_band_Hz
+            spectro,_ = compute_spectrogram(file, windowLength=windowLength, windowHop= windowLength, scale_audio=True, square=False, windowType='hanning', centered=False, normalized= False )
+            main_value = methodToCall(spectro, freq_band_Hz, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
+        elif index_name == 'Bio_acoustic_Index':
+            print '\tCompute', index_name
+            spectro, frequencies = compute_spectrogram(file, **ci[index_name]['spectro'])
+            methodToCall = globals().get(ci[index_name]['function'])
+            main_value = methodToCall(spectro, frequencies, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
+        elif index_name == 'Normalized_Difference_Sound_Index':
+            print '\tCompute', index_name
+            methodToCall = globals().get(ci[index_name]['function'])
+            main_value = methodToCall(file, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
+        elif index_name == 'RMS_energy':
+            print '\tCompute', index_name
+            methodToCall = globals().get(ci[index_name]['function'])
+            temporal_values = methodToCall(file, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, temporal_values=temporal_values)
+
+        elif index_name == 'Spectral_centroid':
+            print '\tCompute', index_name
+            spectro, frequencies = compute_spectrogram(file, **ci[index_name]['spectro'])
+            methodToCall = globals().get(ci[index_name]['function'])
+            temporal_values = methodToCall(spectro, frequencies)
+            file.indices[index_name] = Index(index_name, temporal_values=temporal_values)
+
+
+        elif index_name == 'Spectral_Entropy':
+            print '\tCompute', index_name
+            spectro, _ = compute_spectrogram(file, **ci[index_name]['spectro'])
+            methodToCall = globals().get(ci[index_name]['function'])
+            main_value = methodToCall(spectro)
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
+        elif index_name == 'Temporal_Entropy':
+            print '\tCompute', index_name
+            methodToCall = globals().get(ci[index_name]['function'])
+            main_value = methodToCall(file, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
+        elif index_name == 'ZCR':
+            print '\tCompute', index_name
+            methodToCall = globals().get(ci[index_name]['function'])
+            temporal_values = methodToCall(file, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, temporal_values=temporal_values)
+
+
+
+
+
+    # Output Indices -----------------------------------------------------------------------------------
+    print '- Write Indices'
+    writer = csv.writer(open('dict.csv', 'wb'))
+
+    keys = ['filename']
+    values = [file.file_name]
+    for index, Index in file.indices.items():
+        for key, value in Index.__dict__.iteritems():
+            if key != 'name':
+                keys.append(index + '__' + key)
+                values.append(value)
+    writer.writerow(keys)
+    writer.writerow(values)
+

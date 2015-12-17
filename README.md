@@ -8,6 +8,7 @@ Acoustic_Indices is a Python library to extract acoustic indices from a set of a
  * [Numpy](http://www.numpy.org/)
  * [Scipy](http://www.scipy.org/)
  * [Matlplotlib](http://matplotlib.org/) (for graphing)
+ * [PyYAML](http://pyyaml.org/wiki/PyYAMLDocumentation) (to read configuration file)
 
 ## Features and indices
 
@@ -22,7 +23,7 @@ Acoustic_Indices is a Python library to extract acoustic indices from a set of a
     * Temporal Entropy
     
 * Spectral features extraction
-    * Spectral centroid (in progress)
+    * Spectral centroid 
     * Spectrogram
     
 * Temporal features extraction
@@ -32,7 +33,7 @@ Acoustic_Indices is a Python library to extract acoustic indices from a set of a
 
 ## Usage
 
-TODO: Write usage instructions
+$python compute_indices.py
 
 ## Contributing
 
@@ -44,7 +45,10 @@ TODO: Write usage instructions
 
 ## History
 
-TODO: Write history
+0.2: yaml configuration file. Object oriented audio file ad index.
+0.1: First commit 
+
+
 
 ## Credits
 

@@ -1,0 +1,156 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module compute_indices_object</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>compute_indices_object</strong></big></big> (version 0.2)</font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/guyot/Documents/Workspaces/Python/Acoustic_Indices/compute_indices_object.py">/Users/guyot/Documents/Workspaces/Python/Acoustic_Indices/compute_indices_object.py</a></font></td></tr></table>
+    <p><tt>Set&nbsp;of&nbsp;functions&nbsp;to&nbsp;compute&nbsp;acoustic&nbsp;indices&nbsp;in&nbsp;the&nbsp;framework&nbsp;of&nbsp;Soundscape&nbsp;Ecology.<br>
+&nbsp;<br>
+Some&nbsp;features&nbsp;are&nbsp;inspired&nbsp;or&nbsp;ported&nbsp;from&nbsp;those&nbsp;proposed&nbsp;in:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;seewave&nbsp;R&nbsp;package&nbsp;(<a href="http://rug.mnhn.fr/seewave/">http://rug.mnhn.fr/seewave/</a>)&nbsp;/&nbsp;Jerome&nbsp;Sueur,&nbsp;Thierry&nbsp;Aubin&nbsp;and&nbsp;&nbsp;Caroline&nbsp;Simonis<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;soundecology&nbsp;R&nbsp;package&nbsp;(<a href="http://cran.r-project.org/web/packages/soundecology/index.html">http://cran.r-project.org/web/packages/soundecology/index.html</a>)&nbsp;/&nbsp;Luis&nbsp;J.&nbsp;Villanueva-Rivera&nbsp;and&nbsp;Bryan&nbsp;C.&nbsp;Pijanowski<br>
+&nbsp;<br>
+This&nbsp;file&nbsp;use&nbsp;an&nbsp;object&nbsp;oriented&nbsp;type&nbsp;for&nbsp;audio&nbsp;files&nbsp;described&nbsp;in&nbsp;the&nbsp;file&nbsp;"acoustic_index.py".</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="scipy.signal.html">scipy.signal</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-compute_ACI"><strong>compute_ACI</strong></a>(spectro, j_bin)</dt><dd><tt>Compute&nbsp;the&nbsp;Acoustic&nbsp;Complexity&nbsp;Index&nbsp;from&nbsp;the&nbsp;spectrogram&nbsp;of&nbsp;an&nbsp;audio&nbsp;signal.<br>
+&nbsp;<br>
+Reference:&nbsp;Pieretti&nbsp;N,&nbsp;Farina&nbsp;A,&nbsp;Morri&nbsp;FD&nbsp;(2011)&nbsp;A&nbsp;new&nbsp;methodology&nbsp;to&nbsp;infer&nbsp;the&nbsp;singing&nbsp;activity&nbsp;of&nbsp;an&nbsp;avian&nbsp;community:&nbsp;the&nbsp;Acoustic&nbsp;Complexity&nbsp;Index&nbsp;(ACI).&nbsp;Ecological&nbsp;Indicators,&nbsp;11,&nbsp;868-873.<br>
+&nbsp;<br>
+Ported&nbsp;from&nbsp;the&nbsp;soundecology&nbsp;R&nbsp;package.<br>
+&nbsp;<br>
+spectro:&nbsp;the&nbsp;spectrogram&nbsp;of&nbsp;the&nbsp;audio&nbsp;signal<br>
+j_bin:&nbsp;temporal&nbsp;size&nbsp;of&nbsp;the&nbsp;frame&nbsp;(in&nbsp;samples)</tt></dd></dl>
+ <dl><dt><a name="-compute_ADI"><strong>compute_ADI</strong></a>(spectro, freq_band_Hz, max_freq<font color="#909090">=10000</font>, db_threshold<font color="#909090">=-50</font>, freq_step<font color="#909090">=1000</font>)</dt><dd><tt>Compute&nbsp;Acoustic&nbsp;Diversity&nbsp;Index.<br>
+&nbsp;<br>
+spectro:&nbsp;spectrogram&nbsp;of&nbsp;the&nbsp;audio&nbsp;signal<br>
+freq_band_Hz:&nbsp;frequency&nbsp;band&nbsp;(in&nbsp;Hertz)<br>
+max_freq:&nbsp;the&nbsp;maximum&nbsp;frequency&nbsp;to&nbsp;consider&nbsp;(in&nbsp;Hertz)<br>
+db_threshold:&nbsp;the&nbsp;minimum&nbsp;dB&nbsp;value&nbsp;to&nbsp;consider&nbsp;for&nbsp;the&nbsp;bins&nbsp;of&nbsp;the&nbsp;spectrogram<br>
+freq_step:&nbsp;width&nbsp;of&nbsp;the&nbsp;frequency&nbsp;bands&nbsp;that&nbsp;are&nbsp;considered<br>
+&nbsp;<br>
+&nbsp;<br>
+Ported&nbsp;from&nbsp;the&nbsp;soundecology&nbsp;R&nbsp;package.</tt></dd></dl>
+ <dl><dt><a name="-compute_AEI"><strong>compute_AEI</strong></a>(spectro, freq_band_Hz, max_freq<font color="#909090">=10000</font>, db_threshold<font color="#909090">=-50</font>, freq_step<font color="#909090">=1000</font>)</dt><dd><tt>Compute&nbsp;Acoustic&nbsp;Evenness&nbsp;Index&nbsp;of&nbsp;an&nbsp;audio&nbsp;signal.<br>
+&nbsp;<br>
+spectro:&nbsp;spectrogram&nbsp;of&nbsp;the&nbsp;audio&nbsp;signal<br>
+freq_band_Hz:&nbsp;frequency&nbsp;band&nbsp;(in&nbsp;Hertz)<br>
+max_freq:&nbsp;the&nbsp;maximum&nbsp;frequency&nbsp;to&nbsp;consider&nbsp;(in&nbsp;Hertz)<br>
+db_threshold:&nbsp;the&nbsp;minimum&nbsp;dB&nbsp;value&nbsp;to&nbsp;consider&nbsp;for&nbsp;the&nbsp;bins&nbsp;of&nbsp;the&nbsp;spectrogram<br>
+freq_step:&nbsp;width&nbsp;of&nbsp;the&nbsp;frequency&nbsp;bands&nbsp;that&nbsp;are&nbsp;considered<br>
+&nbsp;<br>
+Ported&nbsp;from&nbsp;the&nbsp;soundecology&nbsp;R&nbsp;package.</tt></dd></dl>
+ <dl><dt><a name="-compute_BI"><strong>compute_BI</strong></a>(spectro, frequencies, min_freq<font color="#909090">=2000</font>, max_freq<font color="#909090">=8000</font>)</dt><dd><tt>Compute&nbsp;the&nbsp;Bioacoustic&nbsp;Index&nbsp;from&nbsp;the&nbsp;spectrogram&nbsp;of&nbsp;an&nbsp;audio&nbsp;signal.<br>
+In&nbsp;theis&nbsp;code,&nbsp;the&nbsp;Bioacoustic&nbsp;Index&nbsp;correspond&nbsp;to&nbsp;the&nbsp;area&nbsp;under&nbsp;the&nbsp;mean&nbsp;spectre&nbsp;(in&nbsp;dB)&nbsp;minus&nbsp;the&nbsp;minimum&nbsp;frequency&nbsp;value&nbsp;of&nbsp;this&nbsp;mean&nbsp;spectre.<br>
+&nbsp;<br>
+Reference:&nbsp;Boelman&nbsp;NT,&nbsp;Asner&nbsp;GP,&nbsp;Hart&nbsp;PJ,&nbsp;Martin&nbsp;RE.&nbsp;2007.&nbsp;Multi-trophic&nbsp;invasion&nbsp;resistance&nbsp;in&nbsp;Hawaii:&nbsp;bioacoustics,&nbsp;field&nbsp;surveys,&nbsp;and&nbsp;airborne&nbsp;remote&nbsp;sensing.&nbsp;Ecological&nbsp;Applications&nbsp;17:&nbsp;2137-2144.<br>
+&nbsp;<br>
+spectro:&nbsp;the&nbsp;spectrogram&nbsp;of&nbsp;the&nbsp;audio&nbsp;signal<br>
+min_freq:&nbsp;minimum&nbsp;frequency&nbsp;(in&nbsp;Hertz)<br>
+max_freq:&nbsp;maximum&nbsp;frequency&nbsp;(in&nbsp;Hertz)<br>
+&nbsp;<br>
+Ported&nbsp;from&nbsp;the&nbsp;soundecology&nbsp;R&nbsp;package.</tt></dd></dl>
+ <dl><dt><a name="-compute_NDSI"><strong>compute_NDSI</strong></a>(file, windowLength<font color="#909090">=1024</font>, anthrophony<font color="#909090">=[1000, 2000]</font>, biophony<font color="#909090">=[2000, 11000]</font>)</dt><dd><tt>Compute&nbsp;Normalized&nbsp;Difference&nbsp;Sound&nbsp;Index&nbsp;from&nbsp;an&nbsp;audio&nbsp;signal.<br>
+This&nbsp;function&nbsp;compute&nbsp;an&nbsp;estimate&nbsp;power&nbsp;spectral&nbsp;density&nbsp;using&nbsp;Welch's&nbsp;method.<br>
+&nbsp;<br>
+Reference:&nbsp;Kasten,&nbsp;Eric&nbsp;P.,&nbsp;Stuart&nbsp;H.&nbsp;Gage,&nbsp;Jordan&nbsp;Fox,&nbsp;and&nbsp;Wooyeong&nbsp;Joo.&nbsp;2012.&nbsp;The&nbsp;Remote&nbsp;Environ-&nbsp;mental&nbsp;Assessment&nbsp;Laboratory's&nbsp;Acoustic&nbsp;Library:&nbsp;An&nbsp;Archive&nbsp;for&nbsp;Studying&nbsp;Soundscape&nbsp;Ecology.&nbsp;Ecological&nbsp;Informatics&nbsp;12:&nbsp;50-67.<br>
+&nbsp;<br>
+windowLength:&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;window&nbsp;for&nbsp;the&nbsp;Welch's&nbsp;method.<br>
+anthrophony:&nbsp;list&nbsp;of&nbsp;two&nbsp;values&nbsp;containing&nbsp;the&nbsp;minimum&nbsp;and&nbsp;maximum&nbsp;frequencies&nbsp;(in&nbsp;Hertz)&nbsp;for&nbsp;antrophony.<br>
+biophony:&nbsp;list&nbsp;of&nbsp;two&nbsp;values&nbsp;containing&nbsp;the&nbsp;minimum&nbsp;and&nbsp;maximum&nbsp;frequencies&nbsp;(in&nbsp;Hertz)&nbsp;for&nbsp;biophony.<br>
+&nbsp;<br>
+Inspired&nbsp;by&nbsp;the&nbsp;seewave&nbsp;R&nbsp;package,&nbsp;the&nbsp;soundecology&nbsp;R&nbsp;package&nbsp;and&nbsp;the&nbsp;original&nbsp;matlab&nbsp;code&nbsp;from&nbsp;the&nbsp;authors.</tt></dd></dl>
+ <dl><dt><a name="-compute_SH"><strong>compute_SH</strong></a>(spectro)</dt><dd><tt>Compute&nbsp;Spectral&nbsp;Entropy&nbsp;of&nbsp;Shannon&nbsp;from&nbsp;the&nbsp;spectrogram&nbsp;of&nbsp;an&nbsp;audio&nbsp;signal.<br>
+&nbsp;<br>
+spectro:&nbsp;the&nbsp;spectrogram&nbsp;of&nbsp;the&nbsp;audio&nbsp;signal<br>
+&nbsp;<br>
+Ported&nbsp;from&nbsp;the&nbsp;seewave&nbsp;R&nbsp;package.</tt></dd></dl>
+ <dl><dt><a name="-compute_TH"><strong>compute_TH</strong></a>(file, integer<font color="#909090">=True</font>)</dt><dd><tt>Compute&nbsp;Temporal&nbsp;Entropy&nbsp;of&nbsp;Shannon&nbsp;from&nbsp;an&nbsp;audio&nbsp;signal.<br>
+&nbsp;<br>
+file:&nbsp;an&nbsp;instance&nbsp;of&nbsp;the&nbsp;AudioFile&nbsp;class.<br>
+integer:&nbsp;if&nbsp;set&nbsp;as&nbsp;True,&nbsp;the&nbsp;Temporal&nbsp;Entropy&nbsp;will&nbsp;be&nbsp;compute&nbsp;on&nbsp;the&nbsp;Integer&nbsp;values&nbsp;of&nbsp;the&nbsp;signal.&nbsp;If&nbsp;not,&nbsp;the&nbsp;signal&nbsp;will&nbsp;be&nbsp;set&nbsp;between&nbsp;-1&nbsp;and&nbsp;1.<br>
+&nbsp;<br>
+Ported&nbsp;from&nbsp;the&nbsp;seewave&nbsp;R&nbsp;package.</tt></dd></dl>
+ <dl><dt><a name="-compute_rms_energy"><strong>compute_rms_energy</strong></a>(file, windowLength<font color="#909090">=512</font>, windowHop<font color="#909090">=256</font>, integer<font color="#909090">=False</font>)</dt><dd><tt>Compute&nbsp;the&nbsp;RMS&nbsp;short&nbsp;time&nbsp;energy.<br>
+&nbsp;<br>
+file:&nbsp;an&nbsp;instance&nbsp;of&nbsp;the&nbsp;AudioFile&nbsp;class.<br>
+windowLength:&nbsp;size&nbsp;of&nbsp;the&nbsp;sliding&nbsp;window&nbsp;(samples)<br>
+windowHop:&nbsp;size&nbsp;of&nbsp;the&nbsp;lag&nbsp;window&nbsp;(samples)<br>
+integer:&nbsp;if&nbsp;set&nbsp;as&nbsp;True,&nbsp;the&nbsp;Temporal&nbsp;Entropy&nbsp;will&nbsp;be&nbsp;compute&nbsp;on&nbsp;the&nbsp;Integer&nbsp;values&nbsp;of&nbsp;the&nbsp;signal.&nbsp;If&nbsp;not,&nbsp;the&nbsp;signal&nbsp;will&nbsp;be&nbsp;set&nbsp;between&nbsp;-1&nbsp;and&nbsp;1.<br>
+&nbsp;<br>
+return:&nbsp;a&nbsp;list&nbsp;of&nbsp;values&nbsp;(rms&nbsp;energy&nbsp;for&nbsp;each&nbsp;window)</tt></dd></dl>
+ <dl><dt><a name="-compute_spectral_centroid"><strong>compute_spectral_centroid</strong></a>(spectro, frequencies)</dt><dd><tt>Compute&nbsp;the&nbsp;spectral&nbsp;centroid&nbsp;of&nbsp;an&nbsp;audio&nbsp;signal&nbsp;from&nbsp;its&nbsp;spectrogram</tt></dd></dl>
+ <dl><dt><a name="-compute_spectrogram"><strong>compute_spectrogram</strong></a>(file, windowLength<font color="#909090">=512</font>, windowHop<font color="#909090">=256</font>, scale_audio<font color="#909090">=True</font>, square<font color="#909090">=True</font>, windowType<font color="#909090">='hanning'</font>, centered<font color="#909090">=False</font>, normalized<font color="#909090">=False</font>)</dt><dd><tt>Compute&nbsp;a&nbsp;spectrogram&nbsp;of&nbsp;an&nbsp;audio&nbsp;signal.<br>
+Return&nbsp;a&nbsp;list&nbsp;of&nbsp;list&nbsp;of&nbsp;values&nbsp;as&nbsp;the&nbsp;spectrogram,&nbsp;and&nbsp;a&nbsp;list&nbsp;of&nbsp;frequencies.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+file&nbsp;--&nbsp;the&nbsp;real&nbsp;part&nbsp;(default&nbsp;0.0)<br>
+&nbsp;<br>
+Parameters:<br>
+@param&nbsp;sig:&nbsp;the&nbsp;audio&nbsp;signal&nbsp;samples&nbsp;(read&nbsp;for&nbsp;example&nbsp;from&nbsp;a&nbsp;.wav&nbsp;with&nbsp;scipy.io.wavfile)<br>
+wLen:&nbsp;length&nbsp;of&nbsp;the&nbsp;fft&nbsp;window&nbsp;(in&nbsp;samples)<br>
+wHop:&nbsp;hop&nbsp;size&nbsp;of&nbsp;the&nbsp;fft&nbsp;window&nbsp;(in&nbsp;samples)<br>
+scale_audio:&nbsp;if&nbsp;set&nbsp;as&nbsp;True,&nbsp;the&nbsp;signal&nbsp;samples&nbsp;are&nbsp;scale&nbsp;between&nbsp;-1&nbsp;and&nbsp;1&nbsp;(as&nbsp;the&nbsp;audio&nbsp;convention).&nbsp;If&nbsp;false&nbsp;the&nbsp;signal&nbsp;samples&nbsp;remains&nbsp;Integers&nbsp;(as&nbsp;output&nbsp;from&nbsp;scipy.io.wavfile)<br>
+square:&nbsp;if&nbsp;set&nbsp;as&nbsp;True,&nbsp;the&nbsp;spectrogram&nbsp;is&nbsp;computed&nbsp;as&nbsp;the&nbsp;square&nbsp;of&nbsp;the&nbsp;magnitude&nbsp;of&nbsp;the&nbsp;fft.&nbsp;If&nbsp;not,&nbsp;it&nbsp;is&nbsp;the&nbsp;magnitude&nbsp;of&nbsp;the&nbsp;fft.<br>
+hamming:&nbsp;if&nbsp;set&nbsp;as&nbsp;True,&nbsp;the&nbsp;spectrogram&nbsp;use&nbsp;a&nbsp;correlation&nbsp;with&nbsp;a&nbsp;hamming&nbsp;window.<br>
+centered:&nbsp;if&nbsp;set&nbsp;as&nbsp;true,&nbsp;each&nbsp;resulting&nbsp;fft&nbsp;is&nbsp;centered&nbsp;on&nbsp;the&nbsp;corresponding&nbsp;sliding&nbsp;window<br>
+normalized:&nbsp;if&nbsp;set&nbsp;as&nbsp;true,&nbsp;divide&nbsp;all&nbsp;values&nbsp;by&nbsp;the&nbsp;maximum&nbsp;value</tt></dd></dl>
+ <dl><dt><a name="-compute_zcr"><strong>compute_zcr</strong></a>(file, windowLength<font color="#909090">=512</font>, windowHop<font color="#909090">=256</font>)</dt><dd><tt>Compute&nbsp;the&nbsp;Zero&nbsp;Crossing&nbsp;Rate&nbsp;of&nbsp;an&nbsp;audio&nbsp;signal.<br>
+&nbsp;<br>
+file:&nbsp;an&nbsp;instance&nbsp;of&nbsp;the&nbsp;AudioFile&nbsp;class.<br>
+windowLength:&nbsp;size&nbsp;of&nbsp;the&nbsp;sliding&nbsp;window&nbsp;(samples)<br>
+windowHop:&nbsp;size&nbsp;of&nbsp;the&nbsp;lag&nbsp;window&nbsp;(samples)<br>
+&nbsp;<br>
+return:&nbsp;a&nbsp;list&nbsp;of&nbsp;values&nbsp;(number&nbsp;of&nbsp;zero&nbsp;crossing&nbsp;for&nbsp;each&nbsp;window)</tt></dd></dl>
+ <dl><dt><a name="-gini"><strong>gini</strong></a>(values)</dt><dd><tt>Compute&nbsp;the&nbsp;Gini&nbsp;index&nbsp;of&nbsp;values.<br>
+&nbsp;<br>
+values:&nbsp;a&nbsp;list&nbsp;of&nbsp;values<br>
+&nbsp;<br>
+Inspired&nbsp;by&nbsp;<a href="http://mathworld.wolfram.com/GiniCoefficient.html">http://mathworld.wolfram.com/GiniCoefficient.html</a>&nbsp;and&nbsp;<a href="http://en.wikipedia.org/wiki/Gini_coefficient">http://en.wikipedia.org/wiki/Gini_coefficient</a></tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__author__</strong> = 'Patrice Guyot'<br>
+<strong>__credits__</strong> = ['Patrice Guyot', 'Alice Eldridge', 'Mika Peck']<br>
+<strong>__email__</strong> = ['guyot.patrice@gmail.com', 'alicee@sussex.ac.uk', 'm.r.peck@sussex.ac.uk']<br>
+<strong>__status__</strong> = 'Development'<br>
+<strong>__version__</strong> = '0.2'</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#7799ee">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Author</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#7799ee"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Patrice&nbsp;Guyot</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#7799ee">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Credits</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#7799ee"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">['Patrice&nbsp;Guyot',&nbsp;'Alice&nbsp;Eldridge',&nbsp;'Mika&nbsp;Peck']</td></tr></table>
+</body></html>
