@@ -112,7 +112,7 @@ def compute_ACI(spectro,j_bin):
 def compute_BI(spectro, frequencies, min_freq = 2000, max_freq = 8000):
     """
     Compute the Bioacoustic Index from the spectrogram of an audio signal.
-    In theis code, the Bioacoustic Index correspond to the area under the mean spectre (in dB) minus the minimum frequency value of this mean spectre.
+    In this code, the Bioacoustic Index correspond to the area under the mean spectre (in dB) minus the minimum frequency value of this mean spectre.
 
     Reference: Boelman NT, Asner GP, Hart PJ, Martin RE. 2007. Multi-trophic invasion resistance in Hawaii: bioacoustics, field surveys, and airborne remote sensing. Ecological Applications 17: 2137-2144.
 
@@ -195,7 +195,9 @@ def compute_NDSI(file, windowLength = 1024, anthrophony=[1000,2000], biophony=[2
     Inspired by the seewave R package, the soundecology R package and the original matlab code from the authors.
     """
 
-    frequencies, pxx = signal.welch(file.sig_float, fs=file.sr, window='hamming', nperseg=windowLength, noverlap=windowLength/2, nfft=windowLength, detrend=False, return_onesided=True, scaling='density', axis=-1) # Estimate power spectral density using Welch's method
+    #frequencies, pxx = signal.welch(file.sig_float, fs=file.sr, window='hamming', nperseg=windowLength, noverlap=windowLength/2, nfft=windowLength, detrend=False, return_onesided=True, scaling='density', axis=-1) # Estimate power spectral density using Welch's method
+    # TODO change of detrend for apollo
+    frequencies, pxx = signal.welch(file.sig_float, fs=file.sr, window='hamming', nperseg=windowLength, noverlap=windowLength/2, nfft=windowLength, detrend='constant', return_onesided=True, scaling='density', axis=-1) # Estimate power spectral density using Welch's method
     avgpow = pxx * frequencies[1] # use a rectangle approximation of the integral of the signal's power spectral density (PSD)
     #avgpow = avgpow / np.linalg.norm(avgpow, ord=2) # Normalization (doesn't change the NDSI values. Slightly differ from the matlab code).
 
@@ -232,6 +234,8 @@ def compute_AEI(spectro, freq_band_Hz, max_freq=10000, db_threshold=-50, freq_st
     """
     Compute Acoustic Evenness Index of an audio signal.
 
+    Reference: Villanueva-Rivera, L. J., B. C. Pijanowski, J. Doucette, and B. Pekin. 2011. A primer of acoustic analysis for landscape ecologists. Landscape Ecology 26: 1233-1246.
+
     spectro: spectrogram of the audio signal
     freq_band_Hz: frequency band (in Hertz)
     max_freq: the maximum frequency to consider (in Hertz)
@@ -261,6 +265,8 @@ def compute_ADI(spectro, freq_band_Hz,  max_freq=10000, db_threshold=-50, freq_s
     """
     Compute Acoustic Diversity Index.
 
+    Reference: Villanueva-Rivera, L. J., B. C. Pijanowski, J. Doucette, and B. Pekin. 2011. A primer of acoustic analysis for landscape ecologists. Landscape Ecology 26: 1233-1246.
+
     spectro: spectrogram of the audio signal
     freq_band_Hz: frequency band (in Hertz)
     max_freq: the maximum frequency to consider (in Hertz)
@@ -288,6 +294,9 @@ def compute_ADI(spectro, freq_band_Hz,  max_freq=10000, db_threshold=-50, freq_s
     #v = [x/np.sum(values) for x in values]
     #v2 = [-i * j  for i,j in zip(v, np.log(v))]
     #return np.sum(v2)
+
+    # Remove zero values
+    values = [value for value in values if value != 0]
 
     return np.sum([-i/ np.sum(values) * np.log(i / np.sum(values))  for i in values])
 
