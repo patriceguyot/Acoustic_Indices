@@ -14,7 +14,7 @@
 """
 
 __author__ = "Patrice Guyot"
-__version__ = "0.2"
+__version__ = "0.2.1"
 __credits__ = ["Patrice Guyot", "Alice Eldridge", "Mika Peck"]
 __email__ = ["guyot.patrice@gmail.com", "alicee@sussex.ac.uk", "m.r.peck@sussex.ac.uk"]
 __status__ = "Development"
@@ -237,18 +237,13 @@ def compute_AEI(spectro, freq_band_Hz, max_freq=10000, db_threshold=-50, freq_st
     Reference: Villanueva-Rivera, L. J., B. C. Pijanowski, J. Doucette, and B. Pekin. 2011. A primer of acoustic analysis for landscape ecologists. Landscape Ecology 26: 1233-1246.
 
     spectro: spectrogram of the audio signal
-    freq_band_Hz: frequency band (in Hertz)
-    max_freq: the maximum frequency to consider (in Hertz)
+   freq_band_Hz: frequency band size of one bin of the spectrogram (in Hertz)
+    max_freq: the maximum frequency to consider to compute AEI (in Hertz)
     db_threshold: the minimum dB value to consider for the bins of the spectrogram
-    freq_step: width of the frequency bands that are considered
+    freq_step: size of frequency bands to compute AEI (in Hertz)
 
     Ported from the soundecology R package.
     """
-
-
-    #TODO better comments for frequencies bands
-
-
 
     bands_Hz = range(0, max_freq, freq_step)
     bands_bin = [f / freq_band_Hz for f in bands_Hz]
@@ -268,24 +263,23 @@ def compute_ADI(spectro, freq_band_Hz,  max_freq=10000, db_threshold=-50, freq_s
     Reference: Villanueva-Rivera, L. J., B. C. Pijanowski, J. Doucette, and B. Pekin. 2011. A primer of acoustic analysis for landscape ecologists. Landscape Ecology 26: 1233-1246.
 
     spectro: spectrogram of the audio signal
-    freq_band_Hz: frequency band (in Hertz)
-    max_freq: the maximum frequency to consider (in Hertz)
+    freq_band_Hz: frequency band size of one bin of the spectrogram (in Hertz)
+    max_freq: the maximum frequency to consider to compute ADI (in Hertz)
     db_threshold: the minimum dB value to consider for the bins of the spectrogram
-    freq_step: width of the frequency bands that are considered
+    freq_step: size of frequency bands to compute ADI (in Hertz)
 
 
     Ported from the soundecology R package.
     """
 
-     #TODO better comments for frequencies bands
 
     bands_Hz = range(0, max_freq, freq_step)
     bands_bin = [f / freq_band_Hz for f in bands_Hz]
 
-    spec_AEI = 20*np.log10(spectro/np.max(spectro))
-    spec_AEI_bands = [spec_AEI[bands_bin[k]:bands_bin[k]+bands_bin[1],] for k in range(len(bands_bin))]
+    spec_ADI = 20*np.log10(spectro/np.max(spectro))
+    spec_ADI_bands = [spec_ADI[bands_bin[k]:bands_bin[k]+bands_bin[1],] for k in range(len(bands_bin))]
 
-    values = [np.sum(spec_AEI_bands[k]>db_threshold)/float(spec_AEI_bands[k].size) for k in range(len(bands_bin))]
+    values = [np.sum(spec_ADI_bands[k]>db_threshold)/float(spec_ADI_bands[k].size) for k in range(len(bands_bin))]
 
     # Shannon Entropy of the values
     #shannon = - sum([y * np.log(y) for y in values]) / len(values)  # Follows the R code. But log is generally log2 for Shannon entropy. Equivalent to shannon = False in soundecology.
@@ -295,8 +289,11 @@ def compute_ADI(spectro, freq_band_Hz,  max_freq=10000, db_threshold=-50, freq_s
     #v2 = [-i * j  for i,j in zip(v, np.log(v))]
     #return np.sum(v2)
 
-    # Remove zero values
+    # Remove zero values (Jan 2016)
     values = [value for value in values if value != 0]
+
+    #replace zero values by 1e-07 (closer to R code, but results quite similars)
+    #values = [x if x != 0 else 1e-07 for x in values]
 
     return np.sum([-i/ np.sum(values) * np.log(i / np.sum(values))  for i in values])
 
