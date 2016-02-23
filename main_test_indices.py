@@ -7,7 +7,7 @@ __author__ = 'guyot'
 """
 
 __author__ = "Patrice Guyot"
-__version__ = "0.2"
+__version__ = "0.3"
 __credits__ = ["Patrice Guyot", "Alice Eldridge", "Mika Peck"]
 __email__ = ["guyot.patrice@gmail.com", "alicee@sussex.ac.uk", "m.r.peck@sussex.ac.uk"]
 __status__ = "Development"
@@ -21,18 +21,13 @@ import csv
 
 
 
-
-
-
 if __name__ == '__main__':
 
-
     #Set config file
-    yml_file = 'config_test_R.yaml'
+    yml_file = 'yaml/config_014_butter.yaml'
 
     # Read signal -------------------------------------
-    filename = '/Users/guyot/Documents/Workspaces/Python/Acoustic_Indices/audio_files/1.wav'
-
+    filename = '/Users/guyot/Desktop/audio/KNEPP-16_0_20150511_0615.wav'
 
 
     file = AudioFile(filename, verbose=True)
@@ -43,19 +38,36 @@ if __name__ == '__main__':
 
     # Pre-processing -----------------------------------------------------------------------------------
     if 'Filtering' in data_config:
-        print '- Pre-processing - High-Pass Filtering:', data_config['Filtering']
-        freq_filter = data_config['Filtering']['frequency']
-        Wn = freq_filter/float(file.niquist)
-        order = data_config['Filtering']['order']
-        [b,a] = signal.butter(order, Wn, btype='highpass')
-        #[z, p, k] = signal.butter(order, Wn, btype='highpass', output='zpk')
+        if data_config['Filtering']['type'] == 'butterworth':
+            print '- Pre-processing - High-Pass Filtering:', data_config['Filtering']
+            freq_filter = data_config['Filtering']['frequency']
+            Wn = freq_filter/float(file.niquist)
+            order = data_config['Filtering']['order']
+            [b,a] = signal.butter(order, Wn, btype='highpass')
+            # to plot the frequency response
+            #w, h = signal.freqz(b, a, worN=2000)
+            #plt.plot((file.sr * 0.5 / np.pi) * w, abs(h))
+            #plt.show()
+            file.process_filtering(signal.filtfilt(b, a, file.sig_float))
+        elif data_config['Filtering']['type'] == 'windowed_sinc':
+            print '- Pre-processing - High-Pass Filtering:', data_config['Filtering']
+            freq_filter = data_config['Filtering']['frequency']
+            fc = freq_filter / float(file.sr)
+            roll_off = data_config['Filtering']['roll_off']
+            b = roll_off / float(file.sr)
+            N = int(np.ceil((4 / b)))
+            if not N % 2: N += 1  # Make sure that N is odd.
+            n = np.arange(N)
+            # Compute a low-pass filter.
+            h = np.sinc(2 * fc * (n - (N - 1) / 2.))
+            w = np.blackman(N)
+            h = h * w
+            h = h / np.sum(h)
+            # Create a high-pass filter from the low-pass filter through spectral inversion.
+            h = -h
+            h[(N - 1) / 2] += 1
+            file.process_filtering(np.convolve(file.sig_float, h))
 
-
-        # to plot the frequency response
-        #w, h = signal.freqz(b, a, worN=2000)
-        #plt.plot((file.sr * 0.5 / np.pi) * w, abs(h))
-        #plt.show()
-        file.process_filtering(signal.filtfilt(b, a, file.sig_float))
 
 
     # Compute Indices -----------------------------------------------------------------------------------
@@ -114,6 +126,7 @@ if __name__ == '__main__':
             temporal_values = methodToCall(file, **ci[index_name]['arguments'])
             file.indices[index_name] = Index(index_name, temporal_values=temporal_values)
 
+
         elif index_name == 'Spectral_centroid':
             print '\tCompute', index_name
             spectro, frequencies = compute_spectrogram(file, **ci[index_name]['spectro'])
@@ -144,6 +157,52 @@ if __name__ == '__main__':
             file.indices[index_name] = Index(index_name, temporal_values=temporal_values)
 
 
+        elif index_name == 'Wave_SNR':
+            print '\tCompute', index_name
+            methodToCall = globals().get(ci[index_name]['function'])
+            values = methodToCall(file, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, values=values)
+
+
+        elif index_name == 'Acoustic_Diversity_Index_NR': # Acoustic_Diversity_Index with Noise Removed spectrograms
+            print '\tCompute', index_name
+            methodToCall = globals().get(ci[index_name]['function'])
+            freq_band_Hz = ci[index_name]['arguments']['max_freq'] / ci[index_name]['arguments']['freq_step']
+            windowLength = file.sr / freq_band_Hz
+            spectro,_ = compute_spectrogram(file, windowLength=windowLength, windowHop= windowLength, scale_audio=True, square=False, windowType='hanning', centered=False, normalized= False )
+            spectro_noise_removed = remove_noiseInSpectro(spectro, **ci[index_name]['remove_noiseInSpectro'])
+            main_value = methodToCall(spectro_noise_removed, freq_band_Hz, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
+        elif index_name == 'Acoustic_Evenness_Index_NR': # Acoustic_Evenness_Index with Noise Removed spectrograms
+            print '\tCompute', index_name
+            methodToCall = globals().get(ci[index_name]['function'])
+            freq_band_Hz = ci[index_name]['arguments']['max_freq'] / ci[index_name]['arguments']['freq_step']
+            windowLength = file.sr / freq_band_Hz
+            spectro,_ = compute_spectrogram(file, windowLength=windowLength, windowHop= windowLength, scale_audio=True, square=False, windowType='hanning', centered=False, normalized= False )
+            spectro_noise_removed = remove_noiseInSpectro(spectro, **ci[index_name]['remove_noiseInSpectro'])
+            main_value = methodToCall(spectro_noise_removed, freq_band_Hz, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
+        elif index_name == 'Bio_acoustic_Index_NR': # Bio_acoustic_Index with Noise Removed spectrograms
+            print '\tCompute', index_name
+            spectro, frequencies = compute_spectrogram(file, **ci[index_name]['spectro'])
+            spectro_noise_removed = remove_noiseInSpectro(spectro, **ci[index_name]['remove_noiseInSpectro'])
+            methodToCall = globals().get(ci[index_name]['function'])
+            main_value = methodToCall(spectro_noise_removed, frequencies, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
+        elif index_name == 'Spectral_Entropy_NR': # Spectral_Entropy with Noise Removed spectrograms
+            print '\tCompute', index_name
+            spectro, _ = compute_spectrogram(file, **ci[index_name]['spectro'])
+            spectro_noise_removed = remove_noiseInSpectro(spectro, **ci[index_name]['remove_noiseInSpectro'])
+            methodToCall = globals().get(ci[index_name]['function'])
+            main_value = methodToCall(spectro_noise_removed)
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
 
 
 
@@ -160,4 +219,3 @@ if __name__ == '__main__':
                 values.append(value)
     writer.writerow(keys)
     writer.writerow(values)
-

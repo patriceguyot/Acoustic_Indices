@@ -14,7 +14,7 @@
 """
 
 __author__ = "Patrice Guyot"
-__version__ = "0.2.1"
+__version__ = "0.3"
 __credits__ = ["Patrice Guyot", "Alice Eldridge", "Mika Peck"]
 __email__ = ["guyot.patrice@gmail.com", "alicee@sussex.ac.uk", "m.r.peck@sussex.ac.uk"]
 __status__ = "Development"
@@ -22,6 +22,7 @@ __status__ = "Development"
 
 from scipy import signal
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 
@@ -35,9 +36,9 @@ def compute_spectrogram(file, windowLength=512, windowHop= 256, scale_audio=True
     file -- the real part (default 0.0)
 
     Parameters:
-    @param sig: the audio signal samples (read for example from a .wav with scipy.io.wavfile)
-    wLen: length of the fft window (in samples)
-    wHop: hop size of the fft window (in samples)
+    file: an instance of the AudioFile class.
+    windowLength: length of the fft window (in samples)
+    windowHop: hop size of the fft window (in samples)
     scale_audio: if set as True, the signal samples are scale between -1 and 1 (as the audio convention). If false the signal samples remains Integers (as output from scipy.io.wavfile)
     square: if set as True, the spectrogram is computed as the square of the magnitude of the fft. If not, it is the magnitude of the fft.
     hamming: if set as True, the spectrogram use a correlation with a hamming window.
@@ -117,6 +118,7 @@ def compute_BI(spectro, frequencies, min_freq = 2000, max_freq = 8000):
     Reference: Boelman NT, Asner GP, Hart PJ, Martin RE. 2007. Multi-trophic invasion resistance in Hawaii: bioacoustics, field surveys, and airborne remote sensing. Ecological Applications 17: 2137-2144.
 
     spectro: the spectrogram of the audio signal
+    frequencies: list of the frequencies of the spectrogram
     min_freq: minimum frequency (in Hertz)
     max_freq: maximum frequency (in Hertz)
 
@@ -237,7 +239,7 @@ def compute_AEI(spectro, freq_band_Hz, max_freq=10000, db_threshold=-50, freq_st
     Reference: Villanueva-Rivera, L. J., B. C. Pijanowski, J. Doucette, and B. Pekin. 2011. A primer of acoustic analysis for landscape ecologists. Landscape Ecology 26: 1233-1246.
 
     spectro: spectrogram of the audio signal
-   freq_band_Hz: frequency band size of one bin of the spectrogram (in Hertz)
+    freq_band_Hz: frequency band size of one bin of the spectrogram (in Hertz)
     max_freq: the maximum frequency to consider to compute AEI (in Hertz)
     db_threshold: the minimum dB value to consider for the bins of the spectrogram
     freq_step: size of frequency bands to compute AEI (in Hertz)
@@ -345,10 +347,162 @@ def compute_rms_energy(file, windowLength=512, windowHop=256, integer=False):
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def compute_spectral_centroid(spectro, frequencies):
     """
-    Compute the spectral centroid of an audio signal from its spectrogram
+    Compute the spectral centroid of an audio signal from its spectrogram.
+
+    spectro: spectrogram of the audio signal
+    frequencies: list of the frequencies of the spectrogram
     """
 
     centroid = [ np.sum(magnitudes*frequencies) / np.sum(magnitudes) for magnitudes in spectro.T]
 
 
     return centroid
+
+
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def compute_wave_SNR(file, frame_length_e=512, min_DB=-60, window_smoothing_e=5, activity_threshold_dB=3, hist_number_bins = 100, dB_range = 10, N = 0):
+    """
+
+    Computes indices from the Signal to Noise Ratio of a waveform.
+    Output:
+        Signal-to-noise ratio (SNR): the decibel difference between the maximum envelope amplitude in any minute segment and the background noise.
+        Acoustic activity: the fraction of frames within a one minute segment where the signal envelope is more than 3 dB above the level of background noise
+        Count of acoustic events: the number of times that the signal envelope crosses the 3 dB threshold
+        Average duration of acoustic events: an acoustic event is a portion of recordingwhich startswhen the signal envelope crosses above the 3 dB threshold and ends when it crosses belowthe 3 dB threshold.
+
+    window_smoothing_e: odd number for sliding mean smoothing of the histogram (can be 3, 5 or 7)
+    hist_number_bins - Number of columns in the histogram
+    dB_range - dB range to consider in the histogram
+    N: The decibel threshold for the waveform is given by the modal intensity plus N times the standard deviation. Higher values of N will remove more energy from the waveform.
+
+    Ref: Towsey, Michael W. (2013) Noise removal from wave-forms and spectro- grams derived from natural recordings of the environment.
+    """
+
+
+
+    times = range(0, len(file.sig_int)-frame_length_e+1, frame_length_e)
+    wave_env = 20*np.log10([np.max(abs(file.sig_float[i : i + frame_length_e])) for i in times])
+
+    minimum = np.max((np.min(wave_env), min_DB)) # If the minimum value is less than -60dB, the minimum is set to -60dB
+
+    hist, bin_edges = np.histogram(wave_env, range=(minimum, minimum + dB_range), bins=hist_number_bins, density=False)
+
+
+    hist_smooth = ([np.mean(hist[i - window_smoothing_e/2: i + window_smoothing_e/2]) for i in range(window_smoothing_e/2, len(hist) - window_smoothing_e/2)])
+    hist_smooth = np.concatenate((np.zeros(window_smoothing_e/2), hist_smooth, np.zeros(window_smoothing_e/2)))
+
+    modal_intensity = np.argmax(hist_smooth)
+
+    if N>0:
+        count_thresh = 68 * sum(hist_smooth) / 100
+        count = hist_smooth[modal_intensity]
+        index_bin = 1
+        while count < count_thresh:
+            if modal_intensity + index_bin <= len(hist_smooth):
+                count = count + hist_smooth[modal_intensity + index_bin]
+            if modal_intensity - index_bin >= 0:
+                count = count + hist_smooth[modal_intensity - index_bin]
+            index_bin += 1
+        thresh = np.min((hist_number_bins, modal_intensity + N * index_bin))
+        background_noise = bin_edges[thresh]
+    elif N==0:
+        background_noise = bin_edges[modal_intensity]
+
+    SNR = np.max(wave_env) - background_noise
+    SN = np.array([frame-background_noise-activity_threshold_dB for frame in wave_env])
+    acoustic_activity = np.sum([i > 0 for i in SN])/float(len(SN))
+
+
+    # Compute acoustic events
+    start_event = [n[0] for n in np.argwhere((SN[:-1] < 0) & (SN[1:] > 0))]
+    end_event = [n[0] for n in np.argwhere((SN[:-1] > 0) & (SN[1:] < 0))]
+    if len(start_event)!=0 and len(end_event)!=0:
+        if start_event[0]<end_event[0]:
+            events=zip(start_event, end_event)
+        else:
+            events=zip(end_event, start_event)
+        count_acoustic_events = len(events)
+        average_duration_e = np.mean([end - begin for begin,end in events] )
+        average_duration_s = average_duration_e * file.duration / float(len(SN))
+    else:
+        count_acoustic_events = 0
+        average_duration_s = 0
+
+
+    dict = {'SNR' : SNR, 'Acoustic_activity' : acoustic_activity, 'Count_acoustic_events' : count_acoustic_events, 'Average_duration' : average_duration_s}
+    return dict
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def remove_noiseInSpectro(spectro, histo_relative_size=8, window_smoothing=5, N=0.1, dB=False, plot=False):
+    """
+
+    Compute a new spectrogram which is "Noise Removed".
+
+    Ref: Towsey, Michael W. (2013) Noise removal from wave-forms and spectrograms derived from natural recordings of the environment.
+    """
+
+    low_value = 1.e-07 # Minimum value for the new spectrogram (preferably slightly higher than 0)
+
+    if dB:
+        spectro = 20*np.log10(spectro)
+
+    len_spectro_e = len(spectro[0])
+    histo_size = len_spectro_e/histo_relative_size
+
+    background_noise=[]
+    for row in spectro:
+        hist, bin_edges = np.histogram(row, bins=histo_size, density=False)
+
+        hist_smooth = ([np.mean(hist[i - window_smoothing /2: i + window_smoothing /2]) for i in range(window_smoothing /2, len(hist) - window_smoothing /2)])
+        hist_smooth = np.concatenate((np.zeros(window_smoothing/2), hist_smooth, np.zeros(window_smoothing /2)))
+
+
+        modal_intensity = np.min([np.argmax(hist_smooth), 95 * histo_size / 100]) # test if modal intensity value is in the top 5%
+
+        if N>0:
+            count_thresh = 68 * sum(hist_smooth) / 100
+            count = hist_smooth[modal_intensity]
+            index_bin = 1
+            while count < count_thresh:
+                if modal_intensity + index_bin <= len(hist_smooth):
+                    count = count + hist_smooth[modal_intensity + index_bin]
+                if modal_intensity - index_bin >= 0:
+                    count = count + hist_smooth[modal_intensity - index_bin]
+                index_bin += 1
+            thresh = int(np.min((histo_size, modal_intensity + N * index_bin)))
+            background_noise.append(bin_edges[thresh])
+        elif N==0:
+            background_noise.append(bin_edges[modal_intensity])
+
+
+    background_noise_smooth = ([np.mean(background_noise[i - window_smoothing /2: i + window_smoothing /2]) for i in range(window_smoothing /2, len(background_noise) - window_smoothing /2)])
+    # keep background noise at the end to avoid last row problem (last bin with old microphones)
+    background_noise_smooth = np.concatenate((background_noise[0:(window_smoothing/2)], background_noise_smooth, background_noise[-(window_smoothing/2):]))
+
+    new_spec = np.array([col - background_noise_smooth for col in spectro.T]).T
+    new_spec = new_spec.clip(min=low_value) # replace negative values by value close to zero
+
+
+    #Figure
+    if plot:
+        colormap="jet"
+        fig = plt.figure()
+        a = fig.add_subplot(1,2,1)
+        if dB:
+            plt.imshow(new_spec, origin="lower", aspect="auto", cmap=colormap, interpolation="none")
+        else:
+            plt.imshow(20*np.log10(new_spec), origin="lower", aspect="auto", cmap=colormap, interpolation="none")
+        a = fig.add_subplot(1,2,2)
+        if dB:
+            plt.imshow(new_spec, origin="lower", aspect="auto", cmap=colormap, interpolation="none")
+        else:
+            plt.imshow(20*np.log10(spectro), origin="lower", aspect="auto", cmap=colormap, interpolation="none")
+        plt.show()
+
+
+
+    return new_spec
