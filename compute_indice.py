@@ -365,18 +365,21 @@ def compute_wave_SNR(file, frame_length_e=512, min_DB=-60, window_smoothing_e=5,
     """
 
     Computes indices from the Signal to Noise Ratio of a waveform.
+
+    file: an instance of the AudioFile class.
+    window_smoothing_e: odd number for sliding mean smoothing of the histogram (can be 3, 5 or 7)
+    hist_number_bins - Number of columns in the histogram
+    dB_range - dB range to consider in the histogram
+    N: The decibel threshold for the waveform is given by the modal intensity plus N times the standard deviation. Higher values of N will remove more energy from the waveform.
+
     Output:
         Signal-to-noise ratio (SNR): the decibel difference between the maximum envelope amplitude in any minute segment and the background noise.
         Acoustic activity: the fraction of frames within a one minute segment where the signal envelope is more than 3 dB above the level of background noise
         Count of acoustic events: the number of times that the signal envelope crosses the 3 dB threshold
         Average duration of acoustic events: an acoustic event is a portion of recordingwhich startswhen the signal envelope crosses above the 3 dB threshold and ends when it crosses belowthe 3 dB threshold.
 
-    window_smoothing_e: odd number for sliding mean smoothing of the histogram (can be 3, 5 or 7)
-    hist_number_bins - Number of columns in the histogram
-    dB_range - dB range to consider in the histogram
-    N: The decibel threshold for the waveform is given by the modal intensity plus N times the standard deviation. Higher values of N will remove more energy from the waveform.
-
     Ref: Towsey, Michael W. (2013) Noise removal from wave-forms and spectro- grams derived from natural recordings of the environment.
+    Towsey, Michael (2013), Noise Removal from Waveforms and Spectrograms Derived from Natural Recordings of the Environment. Queensland University of Technology, Brisbane.
     """
 
 
@@ -442,7 +445,18 @@ def remove_noiseInSpectro(spectro, histo_relative_size=8, window_smoothing=5, N=
 
     Compute a new spectrogram which is "Noise Removed".
 
+    spectro: spectrogram of the audio signal
+    histo_relative_size: ration between the size of the spectrogram and the size of the histogram
+    window_smoothing: number of points to apply a mean filtering on the histogram and on the background noise curve
+    N: Parameter to set the threshold around the modal intensity
+    dB: If set at True, the spectrogram is converted in decibels
+    plot: if set at True, the function plot the orginal and noise removed spectrograms
+
+    Output:
+        Noise removed spectrogram
+
     Ref: Towsey, Michael W. (2013) Noise removal from wave-forms and spectrograms derived from natural recordings of the environment.
+    Towsey, Michael (2013), Noise Removal from Waveforms and Spectrograms Derived from Natural Recordings of the Environment. Queensland University of Technology, Brisbane.
     """
 
     low_value = 1.e-07 # Minimum value for the new spectrogram (preferably slightly higher than 0)
@@ -486,7 +500,6 @@ def remove_noiseInSpectro(spectro, histo_relative_size=8, window_smoothing=5, N=
     new_spec = np.array([col - background_noise_smooth for col in spectro.T]).T
     new_spec = new_spec.clip(min=low_value) # replace negative values by value close to zero
 
-
     #Figure
     if plot:
         colormap="jet"
@@ -506,3 +519,48 @@ def remove_noiseInSpectro(spectro, histo_relative_size=8, window_smoothing=5, N=
 
 
     return new_spec
+
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def compute_NB_peaks(spectro, frequencies, freqband = 200, normalization= True, slopes=(0.01,0.01)):
+    """
+
+    Counts the number of major frequency peaks obtained on a mean spectrum.
+
+    spectro: spectrogram of the audio signal
+    frequencies: list of the frequencies of the spectrogram
+    freqband: frequency threshold parameter (in Hz). If the frequency difference of two successive peaks is less than this threshold, then the peak of highest amplitude will be kept only.
+    normalization: if set at True, the mean spectrum is scaled between 0 and 1
+    slopes: amplitude slope parameter, a tuple of length 2. Refers to the amplitude slopes of the peak. The first value is the left slope and the second value is the right slope. Only peaks with higher slopes than threshold values will be kept.
+
+    Ref: Gasc, A., Sueur, J., Pavoine, S., Pellens, R., & Grandcolas, P. (2013). Biodiversity sampling using a global acoustic approach: contrasting sites with microendemics in New Caledonia. PloS one, 8(5), e65311.
+
+    """
+
+    meanspec = np.array([np.mean(row) for row in spectro])
+
+    if normalization:
+         meanspec =  meanspec/np.max(meanspec)
+
+    # Find peaks (with slopes)
+    peaks_indices = np.r_[False, meanspec[1:] > np.array([x + slopes[0] for x in meanspec[:-1]])] & np.r_[meanspec[:-1] > np.array([y + slopes[1] for y in meanspec[1:]]), False]
+    peaks_indices = peaks_indices.nonzero()[0].tolist()
+
+    #peaks_indices = signal.argrelextrema(np.array(meanspec), np.greater)[0].tolist() # scipy method (without slope)
+
+
+    # Remove peaks with difference of frequency < freqband
+    nb_bin=next(i for i,v in enumerate(frequencies) if v > freqband) # number of consecutive index
+    for consecutiveIndices in [np.arange(i, i+nb_bin) for i in peaks_indices]:
+        if len(np.intersect1d(consecutiveIndices,peaks_indices))>1:
+            # close values has been found
+            maxi = np.intersect1d(consecutiveIndices,peaks_indices)[np.argmax([meanspec[f] for f in np.intersect1d(consecutiveIndices,peaks_indices)])]
+            peaks_indices = [x for x in peaks_indices if x not in consecutiveIndices] # remove all inddices that are in consecutiveIndices
+            peaks_indices.append(maxi) # append the max
+    peaks_indices.sort()
+
+
+    peak_freqs = [frequencies[p] for p in peaks_indices] # Frequencies of the peaks
+
+    return len(peaks_indices)
+

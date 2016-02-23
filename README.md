@@ -1,6 +1,6 @@
 # Acoustic_Indices
 
-Acoustic_Indices is a Python library to extract acoustic indices from a set of audio files, in the framework of Soundscape Ecology.
+Acoustic_Indices is a Python library to extract acoustic indices from an audio file, in the framework of Soundscape Ecology.
 
 
 ## Prerequisites
@@ -21,10 +21,13 @@ Acoustic_Indices is a Python library to extract acoustic indices from a set of a
     * Normalized Difference Sound Index
     * Spectral Entropy
     * Temporal Entropy
+    * Number of Peaks
+    * Wave Signal to Noise Ratio
     
 * Spectral features extraction
     * Spectral centroid 
     * Spectrogram
+    * Noise removed spectrogram
     
 * Temporal features extraction
     * RMS energy
@@ -47,6 +50,7 @@ $python compute_indices.py
 
 Versions: 
 
+* 0.3: New features: wave SNR, spectro noise removed, NB_peaks.
 * 0.2: yaml configuration file. Object oriented audio file and index.
 * 0.1: First commit 
 

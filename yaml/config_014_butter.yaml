@@ -107,6 +107,21 @@ Indices:
         hist_number_bins: 100
         dB_range: 10
 
+  NB_peaks:
+    function: compute_NB_peaks
+    spectro:
+      windowLength: 512
+      windowHop: 512
+      scale_audio: False
+      square: False
+      windowType: hamming
+      centered: False
+      normalized: True
+    arguments:
+      freqband: 200
+      normalization: True
+      slopes: [0.01,0.01]
+
   Acoustic_Diversity_Index_NR:
     function: compute_ADI
     remove_noiseInSpectro:

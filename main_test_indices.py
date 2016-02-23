@@ -164,6 +164,14 @@ if __name__ == '__main__':
             file.indices[index_name] = Index(index_name, values=values)
 
 
+        elif index_name == 'NB_peaks':
+            print '\tCompute', index_name
+            spectro, frequencies = compute_spectrogram(file, **ci[index_name]['spectro'])
+            methodToCall = globals().get(ci[index_name]['function'])
+            main_value = methodToCall(spectro, frequencies, **ci[index_name]['arguments'])
+            file.indices[index_name] = Index(index_name, main_value=main_value)
+
+
         elif index_name == 'Acoustic_Diversity_Index_NR': # Acoustic_Diversity_Index with Noise Removed spectrograms
             print '\tCompute', index_name
             methodToCall = globals().get(ci[index_name]['function'])
