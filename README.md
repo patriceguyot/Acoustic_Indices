@@ -84,5 +84,5 @@ This research was generously funded by Leverhulme Research Project Grant RPG-201
 
 ## License
 
-Non-commercial BSD - see [LICENSE.txt] (https://github.com/sandoval31/Acoustic_Indices/blob/master/LICENSE.txt) for more info
+GPL V 3 - see [LICENSE.txt] (https://github.com/sandoval31/Acoustic_Indices/blob/master/LICENSE.txt) for more info
 
