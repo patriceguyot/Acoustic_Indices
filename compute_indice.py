@@ -125,8 +125,8 @@ def compute_BI(spectro, frequencies, min_freq = 2000, max_freq = 8000):
     Ported from the soundecology R package.
     """
 
-    min_freq_bin=np.argmin([abs(e - min_freq) for e in frequencies]) # min freq in samples (or bin)
-    max_freq_bin=np.ceil(np.argmin([abs(e - max_freq) for e in frequencies])) # max freq in samples (or bin)
+    min_freq_bin = int(np.argmin([abs(e - min_freq) for e in frequencies])) # min freq in samples (or bin)
+    max_freq_bin = int(np.ceil(np.argmin([abs(e - max_freq) for e in frequencies]))) # max freq in samples (or bin)
 
     min_freq_bin = min_freq_bin - 1 # alternative value to follow the R code
 
