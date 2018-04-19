@@ -20,7 +20,7 @@ __email__ = ["guyot.patrice@gmail.com", "alicee@sussex.ac.uk", "m.r.peck@sussex.
 __status__ = "Development"
 
 
-from scipy import signal
+from scipy import signal, fftpack
 import numpy as np
 import matplotlib.pyplot as plt
 
