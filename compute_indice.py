@@ -175,7 +175,8 @@ def compute_TH(file, integer=True):
     else:
         sig=file.sig_float
 
-    env = abs(signal.hilbert(sig)) # Modulo of the Hilbert Envelope
+    #env = abs(signal.hilbert(sig)) # Modulo of the Hilbert Envelope
+    env = abs(signal.hilbert(sig, fftpack.helper.next_fast_len(len(sig)))) # Modulo of the Hilbert Envelope, computed with the next fast length window
 
     env = env / np.sum(env)  # Normalization
     N = len(env)
