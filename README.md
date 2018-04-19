@@ -36,7 +36,7 @@ Acoustic_Indices is a Python library to extract global acoustic indices from an 
 
 ## Usage
 
-$python compute_indices.py
+$python main\_test\_indices.py
 
 ## Contributing
 
