@@ -1,6 +1,6 @@
 # Acoustic_Indices
 
-Acoustic_Indices is a Python library to extract global acoustic indices from an audio file for use as a biodiversity proxy, within the framework of Ecoacoustics. 
+Acoustic_Indices is a Python library to extract global acoustic indices from an audio file for use as a biodiversity proxy, within the framework of Ecoacoustics.
 
 
 ## Prerequisites
@@ -13,7 +13,7 @@ Acoustic_Indices is a Python library to extract global acoustic indices from an 
 ## Features and indices
 
 * Read WAV files (using scipy)
-* Features extraction from Soundscape Ecology 
+* Features extraction from Soundscape Ecology
     * Acoustic Complexity Index
     * Acoustic Diversity Index
     * Acoustic Evenness Index
@@ -23,16 +23,16 @@ Acoustic_Indices is a Python library to extract global acoustic indices from an 
     * Temporal Entropy
     * Number of Peaks
     * Wave Signal to Noise Ratio
-    
+
 * Spectral features extraction
-    * Spectral centroid 
+    * Spectral centroid
     * Spectrogram
     * Noise removed spectrogram
-    
+
 * Temporal features extraction
     * RMS energy
     * Zero Crossing Rate
-    
+
 
 ## Usage
 
@@ -48,11 +48,12 @@ $python main\_test\_indices.py
 
 ## History
 
-Versions: 
+Versions:
 
+* 0.4: Port from Python 2 to Python 3
 * 0.3: New features: wave SNR, spectro noise removed, NB_peaks.
 * 0.2: yaml configuration file. Object oriented audio file and index.
-* 0.1: First commit 
+* 0.1: First commit
 
 
 
@@ -85,4 +86,3 @@ This research was generously funded by Leverhulme Research Project Grant RPG-201
 ## License
 
 GPL V 3 - see [LICENSE.txt](https://github.com/patriceguyot/Acoustic_Indices/blob/master/LICENSE.txt) for more info
-

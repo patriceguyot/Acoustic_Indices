@@ -14,7 +14,7 @@
 """
 
 __author__ = "Patrice Guyot"
-__version__ = "0.3"
+__version__ = "0.4"
 __credits__ = ["Patrice Guyot", "Alice Eldridge", "Mika Peck"]
 __email__ = ["guyot.patrice@gmail.com", "alicee@sussex.ac.uk", "m.r.peck@sussex.ac.uk"]
 __status__ = "Development"
@@ -51,8 +51,8 @@ def compute_spectrogram(file, windowLength=512, windowHop= 256, scale_audio=True
     else:
         sig = file.sig_int # use signal with integers
 
-
     W = signal.get_window(windowType, windowLength, fftbins=False)
+    halfWindowLength = int(windowLength/2)
 
     if centered:
         time_shift = int(windowLength/2)
@@ -63,16 +63,16 @@ def compute_spectrogram(file, windowLength=512, windowHop= 256, scale_audio=True
         frames = [sig[i:i+windowLength]*W for i in times]
 
     if square:
-        spectro =  [abs(np.fft.rfft(frame, windowLength))[0:windowLength/2]**2 for frame in frames]
+        spectro =  [abs(np.fft.rfft(frame, windowLength))[0:halfWindowLength]**2 for frame in frames]
     else:
-        spectro =  [abs(np.fft.rfft(frame, windowLength))[0:windowLength/2] for frame in frames]
+        spectro =  [abs(np.fft.rfft(frame, windowLength))[0:halfWindowLength] for frame in frames]
 
     spectro=np.transpose(spectro) # set the spectro in a friendly way
 
     if normalized:
         spectro = spectro/np.max(spectro) # set the maximum value to 1 y
 
-    frequencies = [e * file.niquist / float(windowLength / 2) for e in range(windowLength / 2)] # vector of frequency<-bin in the spectrogram
+    frequencies = [e * file.niquist / float(windowLength / 2) for e in range(halfWindowLength)] # vector of frequency<-bin in the spectrogram
     return spectro, frequencies
 
 
@@ -252,7 +252,7 @@ def compute_AEI(spectro, freq_band_Hz, max_freq=10000, db_threshold=-50, freq_st
     bands_bin = [f / freq_band_Hz for f in bands_Hz]
 
     spec_AEI = 20*np.log10(spectro/np.max(spectro))
-    spec_AEI_bands = [spec_AEI[bands_bin[k]:bands_bin[k]+bands_bin[1],] for k in range(len(bands_bin))]
+    spec_AEI_bands = [spec_AEI[int(bands_bin[k]):int(bands_bin[k]+bands_bin[1]),] for k in range(len(bands_bin))]
 
     values = [np.sum(spec_AEI_bands[k]>db_threshold)/float(spec_AEI_bands[k].size) for k in range(len(bands_bin))]
 
@@ -280,7 +280,7 @@ def compute_ADI(spectro, freq_band_Hz,  max_freq=10000, db_threshold=-50, freq_s
     bands_bin = [f / freq_band_Hz for f in bands_Hz]
 
     spec_ADI = 20*np.log10(spectro/np.max(spectro))
-    spec_ADI_bands = [spec_ADI[bands_bin[k]:bands_bin[k]+bands_bin[1],] for k in range(len(bands_bin))]
+    spec_ADI_bands = [spec_ADI[int(bands_bin[k]):int(bands_bin[k]+bands_bin[1]),] for k in range(len(bands_bin))]
 
     values = [np.sum(spec_ADI_bands[k]>db_threshold)/float(spec_ADI_bands[k].size) for k in range(len(bands_bin))]
 
@@ -383,7 +383,7 @@ def compute_wave_SNR(file, frame_length_e=512, min_DB=-60, window_smoothing_e=5,
     Towsey, Michael (2013), Noise Removal from Waveforms and Spectrograms Derived from Natural Recordings of the Environment. Queensland University of Technology, Brisbane.
     """
 
-
+    half_window_smoothing = int(window_smoothing_e/2)
 
     times = range(0, len(file.sig_int)-frame_length_e+1, frame_length_e)
     wave_env = 20*np.log10([np.max(abs(file.sig_float[i : i + frame_length_e])) for i in times])
@@ -393,8 +393,8 @@ def compute_wave_SNR(file, frame_length_e=512, min_DB=-60, window_smoothing_e=5,
     hist, bin_edges = np.histogram(wave_env, range=(minimum, minimum + dB_range), bins=hist_number_bins, density=False)
 
 
-    hist_smooth = ([np.mean(hist[i - window_smoothing_e/2: i + window_smoothing_e/2]) for i in range(window_smoothing_e/2, len(hist) - window_smoothing_e/2)])
-    hist_smooth = np.concatenate((np.zeros(window_smoothing_e/2), hist_smooth, np.zeros(window_smoothing_e/2)))
+    hist_smooth = ([np.mean(hist[i - half_window_smoothing: i + half_window_smoothing]) for i in range(half_window_smoothing, len(hist) - half_window_smoothing)])
+    hist_smooth = np.concatenate((np.zeros(half_window_smoothing), hist_smooth, np.zeros(half_window_smoothing)))
 
     modal_intensity = np.argmax(hist_smooth)
 
@@ -423,9 +423,9 @@ def compute_wave_SNR(file, frame_length_e=512, min_DB=-60, window_smoothing_e=5,
     end_event = [n[0] for n in np.argwhere((SN[:-1] > 0) & (SN[1:] < 0))]
     if len(start_event)!=0 and len(end_event)!=0:
         if start_event[0]<end_event[0]:
-            events=zip(start_event, end_event)
+            events=list(zip(start_event, end_event))
         else:
-            events=zip(end_event, start_event)
+            events=list(zip(end_event, start_event))
         count_acoustic_events = len(events)
         average_duration_e = np.mean([end - begin for begin,end in events] )
         average_duration_s = average_duration_e * file.duration / float(len(SN))
@@ -461,22 +461,23 @@ def remove_noiseInSpectro(spectro, histo_relative_size=8, window_smoothing=5, N=
     """
 
     low_value = 1.e-07 # Minimum value for the new spectrogram (preferably slightly higher than 0)
+    half_window_smoothing = int(window_smoothing /2)
 
     if dB:
         spectro = 20*np.log10(spectro)
 
     len_spectro_e = len(spectro[0])
-    histo_size = len_spectro_e/histo_relative_size
+    histo_size = int(len_spectro_e/histo_relative_size)
 
     background_noise=[]
     for row in spectro:
         hist, bin_edges = np.histogram(row, bins=histo_size, density=False)
 
-        hist_smooth = ([np.mean(hist[i - window_smoothing /2: i + window_smoothing /2]) for i in range(window_smoothing /2, len(hist) - window_smoothing /2)])
-        hist_smooth = np.concatenate((np.zeros(window_smoothing/2), hist_smooth, np.zeros(window_smoothing /2)))
+        hist_smooth = ([np.mean(hist[i - half_window_smoothing: i + half_window_smoothing]) for i in range(half_window_smoothing, len(hist) - half_window_smoothing)])
+        hist_smooth = np.concatenate((np.zeros(half_window_smoothing), hist_smooth, np.zeros(half_window_smoothing)))
 
 
-        modal_intensity = np.min([np.argmax(hist_smooth), 95 * histo_size / 100]) # test if modal intensity value is in the top 5%
+        modal_intensity = int(np.min([np.argmax(hist_smooth), 95 * histo_size / 100])) # test if modal intensity value is in the top 5%
 
         if N>0:
             count_thresh = 68 * sum(hist_smooth) / 100
@@ -494,9 +495,9 @@ def remove_noiseInSpectro(spectro, histo_relative_size=8, window_smoothing=5, N=
             background_noise.append(bin_edges[modal_intensity])
 
 
-    background_noise_smooth = ([np.mean(background_noise[i - window_smoothing /2: i + window_smoothing /2]) for i in range(window_smoothing /2, len(background_noise) - window_smoothing /2)])
+    background_noise_smooth = ([np.mean(background_noise[i - half_window_smoothing: i + half_window_smoothing]) for i in range(half_window_smoothing, len(background_noise) - half_window_smoothing)])
     # keep background noise at the end to avoid last row problem (last bin with old microphones)
-    background_noise_smooth = np.concatenate((background_noise[0:(window_smoothing/2)], background_noise_smooth, background_noise[-(window_smoothing/2):]))
+    background_noise_smooth = np.concatenate((background_noise[0:half_window_smoothing], background_noise_smooth, background_noise[-half_window_smoothing:]))
 
     new_spec = np.array([col - background_noise_smooth for col in spectro.T]).T
     new_spec = new_spec.clip(min=low_value) # replace negative values by value close to zero
@@ -564,4 +565,3 @@ def compute_NB_peaks(spectro, frequencies, freqband = 200, normalization= True, 
     peak_freqs = [frequencies[p] for p in peaks_indices] # Frequencies of the peaks
 
     return len(peaks_indices)
-

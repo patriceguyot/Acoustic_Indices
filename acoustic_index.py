@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 __author__ = 'guyot'
-__version__ = "0.3"
+__version__ = "0.4"
 
 
 import numpy as np
@@ -93,21 +93,21 @@ class AudioFile(object):
 
     def __init__(self, file_path, verbose=False):
 
-	default_channel = 0  # Used channel if the audio file contains more than one channel
-	#default_channel = 1  
+        default_channel = 0  # Used channel if the audio file contains more than one channel
+        #default_channel = 1
 
         if verbose:
-            print 'Read the audio file:', file_path
+            print('Read the audio file:', file_path)
         try:
             sr, sig = wavread(file_path)
         except IOError:
-            print "Error: can\'t read the audio file:", file_path
+            print("Error: can\'t read the audio file:", file_path)
         else:
             if verbose:
-                print '\tSuccessful read of the audio file:', file_path
+                print('\tSuccessful read of the audio file:', file_path)
             if len(sig.shape)>1:
                 if verbose:
-                    print '\tThe audio file contains more than one channel. Only the channel', default_channel, 'will be used.'
+                    print('\tThe audio file contains more than one channel. Only the channel', default_channel, 'will be used.')
                 sig=sig[:, default_channel] # Assign default channel
             self.sr = sr
             self.sig_int = sig
@@ -141,25 +141,25 @@ class Index(object):
             self.std = np.nanstd(temporal_values)
             self.var = np.nanvar(temporal_values)
         if values is not None:
-            for name,value in values.iteritems():
+            for name,value in values.items():
                 setattr(self, name, value)
 
     def print_all(self):
-        print "Name:", self.name
+        print("Name:", self.name)
         if hasattr(self, 'main_value'):
-            print "Main value:", self.main_value
+            print("Main value:", self.main_value)
         if hasattr(self, 'temporal_values'):
-            print "Minimum:", self.min
-            print "Maximum:", self.max
-            print "Arithmetic mean value:", self.mean
-            print "Median value:", self.median
-            print "Standard deviation:", self.std
-            print "Variance:", self.var
+            print("Minimum:", self.min)
+            print("Maximum:", self.max)
+            print("Arithmetic mean value:", self.mean)
+            print("Median value:", self.median)
+            print("Standard deviation:", self.std)
+            print("Variance:", self.var)
         if hasattr(self, 'values'):
             for name,value in self.values.iteritems():
-                print name, ':', value
+                print(name, ':', value)
 
 if __name__ == '__main__':
-    print "Hello"
+    print("Hello")
     centroid = Index('centroid',2,[2,3,4,5,19,10])
     centroid.print_all()
