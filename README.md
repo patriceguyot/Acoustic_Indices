@@ -2,17 +2,15 @@
 
 Acoustic_Indices is a Python library to extract global acoustic indices from an audio file for use as a biodiversity proxy, within the framework of Ecoacoustics.
 
+## Pipeline
 
-## Prerequisites
-
- * [Numpy](http://www.numpy.org/)
- * [Scipy](http://www.scipy.org/)
- * [Matlplotlib](http://matplotlib.org/) (for graphing)
- * [PyYAML](http://pyyaml.org/wiki/PyYAMLDocumentation) (to read configuration file)
-
-## Features and indices
-
+* Get list of indices and features from a Yaml configuration file 
 * Read WAV files (using scipy)
+* For each audio file, compute stats (min, max, mean, median, std, var) on temporal indices or get global value
+* Output a csv file
+
+## Indices
+
 * Features extraction from Soundscape Ecology
     * Acoustic Complexity Index
     * Acoustic Diversity Index
@@ -33,10 +31,24 @@ Acoustic_Indices is a Python library to extract global acoustic indices from an 
     * RMS energy
     * Zero Crossing Rate
 
-
 ## Usage
 
-$python main\_test\_indices.py
+### Test that everything is going well on one audio file 
+$python main\_test\_indices.py 
+
+### Compute indices from a directory of audio files 
+$python  main\_compute\_indices\_from\_dir
+
+
+## Prerequisites
+
+ * [Numpy](http://www.numpy.org/)
+ * [Scipy](http://www.scipy.org/)
+ * [Matlplotlib](http://matplotlib.org/) (for graphing)
+ * [PyYAML](http://pyyaml.org/wiki/PyYAMLDocumentation) (to read configuration file)
+
+
+
 
 ## Contributing
 
@@ -50,6 +62,7 @@ $python main\_test\_indices.py
 
 Versions:
 
+* 0.5: New main (main\_compute\_indices\_from\_dir) to compute all indices from a directory of audio files
 * 0.4: Port from Python 2 to Python 3
 * 0.3: New features: wave SNR, spectro noise removed, NB_peaks.
 * 0.2: yaml configuration file. Object oriented audio file and index.
