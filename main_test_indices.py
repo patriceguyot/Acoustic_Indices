@@ -9,7 +9,7 @@ __author__ = 'guyot'
 __author__ = "Patrice Guyot"
 __version__ = "0.4"
 __credits__ = ["Patrice Guyot", "Alice Eldridge", "Mika Peck"]
-__email__ = ["guyot.patrice@gmail.com", "alicee@sussex.ac.uk", "m.r.peck@sussex.ac.uk"]
+__email__ = ["patrice.guyot@mines-ales.fr", "alicee@sussex.ac.uk", "m.r.peck@sussex.ac.uk"]
 __status__ = "Development"
 
 
