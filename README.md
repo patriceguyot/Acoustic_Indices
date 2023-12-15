@@ -33,10 +33,10 @@ Acoustic_Indices is a Python library to extract global acoustic indices from an 
 
 ## Usage
 
-### Test that everything is going well on one audio file 
+Test that everything is going well on one audio file: 
 $python main\_test\_indices.py 
 
-### Compute indices from a directory of audio files 
+Compute indices from a directory of audio files:
 $python  main\_compute\_indices\_from\_dir
 
 
@@ -96,6 +96,10 @@ Villanueva-Rivera, L. J., B. C. Pijanowski, J. Doucette, and B. Pekin. 2011. A p
 
 This research was generously funded by Leverhulme Research Project Grant RPG-2014-403
 
-## License
+## Citation
 
-GPL V 3 - see [LICENSE.txt](https://github.com/patriceguyot/Acoustic_Indices/blob/master/LICENSE.txt) for more info
+If you use this code, please cite: Alice Eldridge, & Patrice Guyot. (2023). patriceguyot/Acoustic_Indices: v1.0.0 (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.10391651
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10391651.svg)](https://doi.org/10.5281/zenodo.10391651)
+
+
