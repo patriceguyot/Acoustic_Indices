@@ -2,12 +2,6 @@
 
 Acoustic_Indices is a Python library to extract global acoustic indices from an audio file for use as a biodiversity proxy, within the framework of Ecoacoustics.
 
-## Pipeline
-
-* Get list of indices and features from a Yaml configuration file 
-* Read WAV files (using scipy)
-* For each audio file, compute stats (min, max, mean, median, std, var) on temporal indices or get global value
-* Output a csv file
 
 ## Indices
 
@@ -33,12 +27,23 @@ Acoustic_Indices is a Python library to extract global acoustic indices from an 
 
 ## Usage
 
-Test that everything is going well on one audio file: 
+Test that everything is going well on one audio file:
+
+``` 
 $python main\_test\_indices.py 
+```
 
 Compute indices from a directory of audio files:
+````
 $python  main\_compute\_indices\_from\_dir
+```
 
+This is the pipeline of the processing:
+
+* Get list of indices and features from a Yaml configuration file 
+* Read WAV files (using scipy)
+* For each audio file, compute stats (min, max, mean, median, std, var) for temporal acoustic indices or get global value for other indices
+* Output a csv file (with a row for each audio file and a column for each index)
 
 ## Prerequisites
 
@@ -50,13 +55,29 @@ $python  main\_compute\_indices\_from\_dir
 
 
 
-## Contributing
 
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
+## Reference
+
+If you use this code, please cite: Alice Eldridge, & Patrice Guyot. (2023). Python implementation of acoustic indices and low level descriptors (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.10391651
+
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10391651.svg)](https://doi.org/10.5281/zenodo.10391651)
+
+
+
+
+
+## Publications
+
+This code has been used in the following scientific papers:
+
+* Durbridge, S., & Murphy, D. T. (2023). Assessment of soundscapes using self-report and physiological measures. Acta Acustica, 7, 6.
+* Martínez-Tabares, F., & Orozco-Alzate, M. (2022, November). Selection of acoustic features for the discrimination between highly and moderately transformed Colombian soundscapes. In Ibero-American Conference on Artificial Intelligence (pp. 121-132). Cham: Springer International Publishing.
+* Sumitani, S., Suzuki, R., Morimatsu, T., Matsubayashi, S., Arita, T., Nakadai, K., & Okuno, H. G. (2020, January). Soundscape Analysis of Bird Songs in Forests Using Microphone Arrays. In 2020 IEEE/SICE International Symposium on System Integration (SII) (pp. 634-639). IEEE.
+* Carruthers-Jones, J., Eldridge, A., Guyot, P., Hassall, C., & Holmes, G. (2019). The call of the wild: Investigating the potential for ecoacoustic methods in mapping wilderness areas. Science of the Total Environment, 695, 133797.
+* Eldridge, A., Guyot, P., Moscoso, P., Johnston, A., Eyre-Walker, Y., & Peck, M. (2018). Sounding out ecoacoustic metrics: Avian species richness is predicted by acoustic indices in temperate but not tropical habitats. Ecological Indicators, 95, 939-952.
+
+
 
 ## History
 
@@ -69,8 +90,8 @@ Versions:
 * 0.1: First commit
 
 
-
 ## Credits
+
 
 The following indices are based on the following papers and inspired in part by the R packages [seewave] (https://cran.r-project.org/package=seewave) and [soundecology] (https://cran.r-project.org/package=soundecology)  
 * Acoustic Complexity Index - Pieretti et al. (2011)
@@ -94,12 +115,8 @@ Sueur, J., Pavoine, S., Hamerlynck, O. & Duvail, S. (2008) - Rapid acoustic surv
 Villanueva-Rivera, L. J., B. C. Pijanowski, J. Doucette, and B. Pekin. 2011. A primer of acoustic analysis for landscape ecologists. Landscape Ecology 26: 1233-1246. doi: 10.1007/s10980-011-9636-9.
 
 
-This research was generously funded by Leverhulme Research Project Grant RPG-2014-403
+This research was generously funded by Leverhulme Research Project Grant RPG-2014-403.
 
-## Citation
 
-If you use this code, please cite: Alice Eldridge, & Patrice Guyot. (2023). patriceguyot/Acoustic_Indices: v1.0.0 (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.10391651
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10391651.svg)](https://doi.org/10.5281/zenodo.10391651)
 
 
