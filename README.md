@@ -34,7 +34,7 @@ $python main\_test\_indices.py
 ```
 
 Compute indices from a directory of audio files:
-````
+```
 $python  main\_compute\_indices\_from\_dir
 ```
 
