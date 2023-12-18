@@ -25,6 +25,32 @@ Acoustic_Indices is a Python library to extract global acoustic indices from an 
     * RMS energy
     * Zero Crossing Rate
 
+
+
+
+## Reference
+
+If you use this code, please cite: Alice Eldridge, & Patrice Guyot. (2023). Python implementation of acoustic indices and low level descriptors (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.10391651
+
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10391651.svg)](https://doi.org/10.5281/zenodo.10391651)
+
+
+
+
+
+## Publications
+
+This code have been used in the following scientific papers:
+
+* Durbridge, S., & Murphy, D. T. (2023). Assessment of soundscapes using self-report and physiological measures. Acta Acustica, 7, 6.
+* Martínez-Tabares, F., & Orozco-Alzate, M. (2022, November). Selection of acoustic features for the discrimination between highly and moderately transformed Colombian soundscapes. In Ibero-American Conference on Artificial Intelligence (pp. 121-132). Cham: Springer International Publishing.
+* Sumitani, S., Suzuki, R., Morimatsu, T., Matsubayashi, S., Arita, T., Nakadai, K., & Okuno, H. G. (2020, January). Soundscape Analysis of Bird Songs in Forests Using Microphone Arrays. In 2020 IEEE/SICE International Symposium on System Integration (SII) (pp. 634-639). IEEE.
+* Carruthers-Jones, J., Eldridge, A., Guyot, P., Hassall, C., & Holmes, G. (2019). The call of the wild: Investigating the potential for ecoacoustic methods in mapping wilderness areas. Science of the Total Environment, 695, 133797.
+* Eldridge, A., Guyot, P., Moscoso, P., Johnston, A., Eyre-Walker, Y., & Peck, M. (2018). Sounding out ecoacoustic metrics: Avian species richness is predicted by acoustic indices in temperate but not tropical habitats. Ecological Indicators, 95, 939-952.
+
+
+
 ## Usage
 
 Test that everything is going well on one audio file:
@@ -53,29 +79,6 @@ This is the pipeline of the processing:
  * [PyYAML](http://pyyaml.org/wiki/PyYAMLDocumentation) (to read configuration file)
 
 
-
-
-
-## Reference
-
-If you use this code, please cite: Alice Eldridge, & Patrice Guyot. (2023). Python implementation of acoustic indices and low level descriptors (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.10391651
-
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10391651.svg)](https://doi.org/10.5281/zenodo.10391651)
-
-
-
-
-
-## Publications
-
-This code has been used in the following scientific papers:
-
-* Durbridge, S., & Murphy, D. T. (2023). Assessment of soundscapes using self-report and physiological measures. Acta Acustica, 7, 6.
-* Martínez-Tabares, F., & Orozco-Alzate, M. (2022, November). Selection of acoustic features for the discrimination between highly and moderately transformed Colombian soundscapes. In Ibero-American Conference on Artificial Intelligence (pp. 121-132). Cham: Springer International Publishing.
-* Sumitani, S., Suzuki, R., Morimatsu, T., Matsubayashi, S., Arita, T., Nakadai, K., & Okuno, H. G. (2020, January). Soundscape Analysis of Bird Songs in Forests Using Microphone Arrays. In 2020 IEEE/SICE International Symposium on System Integration (SII) (pp. 634-639). IEEE.
-* Carruthers-Jones, J., Eldridge, A., Guyot, P., Hassall, C., & Holmes, G. (2019). The call of the wild: Investigating the potential for ecoacoustic methods in mapping wilderness areas. Science of the Total Environment, 695, 133797.
-* Eldridge, A., Guyot, P., Moscoso, P., Johnston, A., Eyre-Walker, Y., & Peck, M. (2018). Sounding out ecoacoustic metrics: Avian species richness is predicted by acoustic indices in temperate but not tropical habitats. Ecological Indicators, 95, 939-952.
 
 
 
