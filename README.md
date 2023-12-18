@@ -43,6 +43,8 @@ If you use this code, please cite: Alice Eldridge, & Patrice Guyot. (2023). Pyth
 
 This code have been used in the following scientific papers:
 
+
+* Martínez-Tabares, F., & Orozco-Alzate, M. (2023). Identifying Acoustic Features to Distinguish Highly and Moderately Altered Soundscapes in Colombia. Inteligencia Artificial, 26(71), 34-45.
 * Durbridge, S., & Murphy, D. T. (2023). Assessment of soundscapes using self-report and physiological measures. Acta Acustica, 7, 6.
 * Martínez-Tabares, F., & Orozco-Alzate, M. (2022, November). Selection of acoustic features for the discrimination between highly and moderately transformed Colombian soundscapes. In Ibero-American Conference on Artificial Intelligence (pp. 121-132). Cham: Springer International Publishing.
 * Sumitani, S., Suzuki, R., Morimatsu, T., Matsubayashi, S., Arita, T., Nakadai, K., & Okuno, H. G. (2020, January). Soundscape Analysis of Bird Songs in Forests Using Microphone Arrays. In 2020 IEEE/SICE International Symposium on System Integration (SII) (pp. 634-639). IEEE.
