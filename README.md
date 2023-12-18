@@ -30,7 +30,7 @@ Acoustic_Indices is a Python library to extract global acoustic indices from an 
 
 ## Reference
 
-If you use this code, please cite: Alice Eldridge, & Patrice Guyot. (2023). Python implementation of acoustic indices and low level descriptors (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.10391651
+If you use this code, please cite: Patrice Guyot, & Alice Eldridge. (2023). Python implementation of acoustic indices and low level descriptors. Zenodo. https://doi.org/10.5281/zenodo.10391651
 
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10391651.svg)](https://doi.org/10.5281/zenodo.10391651)
